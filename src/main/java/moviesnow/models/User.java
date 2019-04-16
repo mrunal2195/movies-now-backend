@@ -1,12 +1,14 @@
-package moviesnow.entities;
+package moviesnow.models;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 @Entity
-
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 public class User {
 	
 	@Id
@@ -17,7 +19,8 @@ public class User {
 	private String password;
 	private String firstname;
 	private String lastname;
-	private boolean isFlagged = false;
+	private boolean isflagged = false;
+	private String role;
 	
 	
 	
@@ -58,10 +61,16 @@ public class User {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	public boolean isFlagged() {
-		return isFlagged;
+	public boolean isflagged() {
+		return isflagged;
 	}
-	public void setFlagged(boolean isFlagged) {
-		this.isFlagged = isFlagged;
+	public void setFlagged(boolean isflagged) {
+		this.isflagged = isflagged;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	}
 }
