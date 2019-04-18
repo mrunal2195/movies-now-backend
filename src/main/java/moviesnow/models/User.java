@@ -1,11 +1,21 @@
 package moviesnow.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
@@ -22,6 +32,15 @@ public class User {
 	private boolean isflagged = false;
 	private String role;
 	
+	@OneToMany(mappedBy="user", fetch = FetchType.EAGER, orphanRemoval=true)
+	@JsonIgnore
+	@Fetch(FetchMode.SELECT)
+	private List<Comment> comments = new ArrayList();
+	
+	@OneToMany(mappedBy="user", fetch = FetchType.EAGER, orphanRemoval=true)
+	@JsonIgnore
+	@Fetch(FetchMode.SELECT)
+	private List<FavouriteMovie> movies = new ArrayList<>();
 	
 	
 	
@@ -61,16 +80,30 @@ public class User {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	public boolean isflagged() {
-		return isflagged;
-	}
-	public void setFlagged(boolean isflagged) {
-		this.isflagged = isflagged;
-	}
+	
 	public String getRole() {
 		return role;
 	}
 	public void setRole(String role) {
 		this.role = role;
+	}
+	public List<FavouriteMovie> getMovies() {
+		return movies;
+	}
+	public void setMovies(List<FavouriteMovie> movies) {
+		this.movies = movies;
+	}
+	
+	public boolean isIsflagged() {
+		return isflagged;
+	}
+	public void setIsflagged(boolean isflagged) {
+		this.isflagged = isflagged;
+	}
+	public List<Comment> getComments() {
+		return comments;
+	}
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 }
