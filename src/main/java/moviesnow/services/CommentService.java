@@ -39,13 +39,33 @@ public class CommentService {
 		return comments;
 	}
 	
+	@GetMapping("/api/comment/flagged")
+	public List<Comment> getFlaggedComments(){
+		List<Comment> comments = commentRepository.findFlaggedComments();
+		return comments;
+	}
+	
+	
 	@PutMapping("/api/comment/{commentid}")
 	public Comment flagComment(@PathVariable("commentid") int id, @RequestBody Comment comment) {
 		Comment newComment = commentRepository.findById(id).get();
 		newComment.setFlagCount(comment.getFlagCount());
 		commentRepository.save(newComment);
-		return newComment;
-		
+		return newComment;	
 	}
+	
+	@PutMapping("/api/comment/{commentid}/{action}")
+	public Comment manageComment(@PathVariable("commentid") int commentId, @PathVariable("action") String action) {
+		Comment comment = commentRepository.findById(commentId).get();
+		if (action.equals("UNFLAG")) {
+			comment.setFlagCount(0);
+			commentRepository.save(comment);
+		}else if(action.equals("DELETE")) {
+			commentRepository.deleteById(commentId);
+		}	
+		return comment;
+	}
+	
+	
 	
 }
