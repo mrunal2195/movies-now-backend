@@ -22,7 +22,7 @@ public class Comment {
 	private User user;
 	
 	
-	private int flagCount;
+	private int flagCount=0;
 
 	public int getId() {
 		return id;
@@ -32,12 +32,20 @@ public class Comment {
 		this.id = id;
 	}
 
-	public String getMovieId() {
+	public String getImdbid() {
 		return imdbid;
 	}
 
-	public void setMovieId(String movieId) {
-		this.imdbid = movieId;
+	public void setImdbid(String imdbid) {
+		this.imdbid = imdbid;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public User getUser() {
@@ -46,6 +54,9 @@ public class Comment {
 
 	public void setUser(User user) {
 		this.user = user;
+		if(!this.user.getComments().contains(this)) {
+			this.user.getComments().add(this);
+		}
 	}
 	public int getFlagCount() {
 		return flagCount;
@@ -53,6 +64,4 @@ public class Comment {
 	public void setFlagCount(int flagCount) {
 		this.flagCount = flagCount;
 	}
-	
-	
 }
