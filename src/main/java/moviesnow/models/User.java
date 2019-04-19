@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Fetch;
@@ -42,6 +45,19 @@ public class User {
 	@Fetch(FetchMode.SELECT)
 	private List<FavouriteMovie> movies = new ArrayList<>();
 	
+	@JoinTable(name = "followTable", joinColumns = {
+	@JoinColumn(name = "follower", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
+	@JoinColumn(name="followee", referencedColumnName = "id", nullable = false)})
+	@ManyToMany
+	@JsonIgnore
+	@Fetch(FetchMode.SELECT)
+	private List<User> follows = new ArrayList<>();
+	
+	
+	@ManyToMany(mappedBy="follows")
+	@JsonIgnore
+	@Fetch(FetchMode.SELECT)
+	private List<User>followedBy = new ArrayList<>();
 	
 	
 	public int getId() {
@@ -50,6 +66,7 @@ public class User {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	public String getUsername() {
 		return username;
 	}
@@ -105,5 +122,49 @@ public class User {
 	}
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
+	}
+	
+	public List<User> getFollows() {
+		return follows;
+	}
+	public void setFollows(List<User> follows) {
+		this.follows = follows;
+	}
+	
+	public void addFollows(User user) {
+		if(!this.follows.contains(user)) {
+			this.follows.add(user);
+		}
+		if(!user.followedBy.contains(this)){
+			user.followedBy.add(this);
+		}
+	}
+	
+	public void removeFollows(User user) {
+		this.follows.remove(user);
+		if(user.followedBy.contains(this)) {
+			user.followedBy.remove(this);
+		}
+	}
+	
+	public List<User> getFollowedBy() {
+		return followedBy;
+	}
+	public void setFollowedBy(List<User> followedBy) {
+		this.followedBy = followedBy;
+	}
+	
+	public void addFollowedBy(User user) {
+		this.followedBy.add(user);
+		if(!user.follows.contains(this)) {
+			user.follows.add(this);
+		}
+	}
+	
+	public void removeFollowedBy(User user) {
+		this.followedBy.remove(user);
+		if(user.follows.contains(this)) {
+			user.follows.remove(this);
+		}
 	}
 }

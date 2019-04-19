@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,6 +82,38 @@ public class UserService {
 	@GetMapping("/api/users/{userId}")
 	public User findUserById(@PathVariable("userId") int id) {
 		return userRepository.findById(id).get();
+	}
+	
+	@GetMapping("/api/users/{userId}/findPoeple")
+	public List<User> returnUsersToFollow(@PathVariable("userId") int userId){
+		List<User> usersToFollow = userRepository.returnUsersToFollow(userId);
+		return usersToFollow;
+	}
+	
+	@PostMapping("/api/users/{follwer}/follow/{followee}")
+	public User followUser(@PathVariable("follwer") int followerId, @PathVariable("followee") int followeeId) {
+		User follower = userRepository.findById(followerId).get();
+		User followee = userRepository.findById(followeeId).get();
+		follower.addFollows(followee);
+		userRepository.save(follower);
+		userRepository.save(followee);
+		return followee;
+	}
+	
+	@DeleteMapping("/api/users/{follwer}/unfollow/{followee}")
+	public User unfollowUser(@PathVariable("follwer") int followerId, @PathVariable("followee") int followeeId) {
+		User follower = userRepository.findById(followerId).get();
+		User followee = userRepository.findById(followeeId).get();
+		follower.removeFollows(followee);
+		userRepository.save(follower);
+		userRepository.save(followee);
+		return followee;
+	}
+	
+	@GetMapping("/api/users/{follower}/follow")
+	public List<User> getFollwedPeople(@PathVariable("follower") int followerId){
+		User follower = userRepository.findById(followerId).get();
+		return follower.getFollows();
 	}
 	
 	

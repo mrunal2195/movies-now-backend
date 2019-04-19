@@ -1,6 +1,9 @@
 package moviesnow.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,19 +26,38 @@ public class FavouriteMovieService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private UserService userService;
 	
-	@PostMapping("/api/user/{userId}/movie")
+	
+	@PostMapping("/api/users/{userId}/movie")
 	public FavouriteMovie likeMovie(@PathVariable("userId") int userId, @RequestBody FavouriteMovie movie) {
 		User user = userRepository.findById(userId).get();
+		String movieId = movie.getImdbid();
+		FavouriteMovie movie1 = movieRepository.findMovieByImdbId(movieId, userId);
+		if(movie1!=null) {
+			return null;
+		}
 		movie.setUser(user);
 		movieRepository.save(movie);
 		return movie;
-		
 	}
 	
-	@GetMapping("/api/user/{userId}/movie")
+	@GetMapping("/api/users/{userId}/movie")
 	public List<FavouriteMovie> getLikedMovies(@PathVariable("userId") int userId){
 		User user = userRepository.findById(userId).get();
 		return user.getMovies();
+	}
+	
+	@GetMapping("/api/users/{userId}/followermovies")
+	public Map<String, List<FavouriteMovie>> moviesofFollowedUsers(@PathVariable("userId") int id){
+		Map<String, List<FavouriteMovie>> userMovies = new HashMap<>();
+		List<User> users = userService.getFollwedPeople(id);
+		for (User user : users) {
+			List<FavouriteMovie> movies = getLikedMovies(user.getId());
+			if(!movies.isEmpty())
+			userMovies.put(user.getFirstname(), movies);
+		}
+		return userMovies;
 	}
 }
