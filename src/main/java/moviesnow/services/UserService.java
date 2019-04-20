@@ -109,6 +109,11 @@ public class UserService {
 		userRepository.save(followee);
 		return followee;
 	}
+
+	@DeleteMapping("/api/users/{user}")
+	public void deleteUser(@PathVariable("user") int userId) {
+		userRepository.deleteById(userId);
+	}
 	
 	@GetMapping("/api/users/{follower}/follow")
 	public List<User> getFollwedPeople(@PathVariable("follower") int followerId){
