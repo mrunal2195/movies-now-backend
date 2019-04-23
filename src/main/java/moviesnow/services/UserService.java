@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import moviesnow.models.FavouriteMovie;
 import moviesnow.models.User;
+import moviesnow.repositories.FavouriteMovieRepository;
 import moviesnow.repositories.ModeratorRepository;
 import moviesnow.repositories.UserRepository;
 import moviesnow.repositories.ViewerRepository;
@@ -27,6 +29,9 @@ public class UserService {
 	private ModeratorRepository moderatorRepository;
 	@Autowired
 	private ViewerRepository viewerRepository;
+	
+	@Autowired
+	private FavouriteMovieRepository movieRepository;
 	
 	@PostMapping("/api/register")
 	public User register(@RequestBody User user, HttpSession session) {
@@ -81,7 +86,8 @@ public class UserService {
 	
 	@GetMapping("/api/users/{userId}")
 	public User findUserById(@PathVariable("userId") int id) {
-		return userRepository.findById(id).get();
+		User user =  userRepository.findById(id).get();
+		return user;
 	}
 	
 	@GetMapping("/api/users/{userId}/findPoeple")
@@ -94,6 +100,9 @@ public class UserService {
 	public User followUser(@PathVariable("follwer") int followerId, @PathVariable("followee") int followeeId) {
 		User follower = userRepository.findById(followerId).get();
 		User followee = userRepository.findById(followeeId).get();
+		if(followerId == followeeId) {
+			return null;
+		}
 		follower.addFollows(followee);
 		userRepository.save(follower);
 		userRepository.save(followee);

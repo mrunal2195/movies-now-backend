@@ -49,15 +49,15 @@ public class User {
 	@JoinColumn(name = "follower", referencedColumnName = "id", nullable = false)}, inverseJoinColumns = {
 	@JoinColumn(name="followee", referencedColumnName = "id", nullable = false)})
 	@ManyToMany
-	@JsonIgnore
 	@Fetch(FetchMode.SELECT)
+	@JsonIgnore
 	private List<User> follows = new ArrayList<>();
 	
 	
-	@ManyToMany(mappedBy="follows")
-	@JsonIgnore
+	@ManyToMany(mappedBy="follows", fetch = FetchType.LAZY)
 	@Fetch(FetchMode.SELECT)
-	private List<User>followedBy = new ArrayList<>();
+	@JsonIgnore
+	private List<User>followedBy = new ArrayList<>();	
 	
 	
 	public int getId() {

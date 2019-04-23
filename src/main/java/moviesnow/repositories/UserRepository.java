@@ -18,4 +18,5 @@ public interface UserRepository extends CrudRepository<User, Integer>{
 	
 	@Query("Select user from User user where user.id<>:userId")
 	public List<User> returnUsersToFollow(@Param("userId") int userId);
+	
 }

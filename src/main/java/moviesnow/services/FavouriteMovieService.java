@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +45,13 @@ public class FavouriteMovieService {
 		return movie;
 	}
 	
+	@DeleteMapping("/api/users/{userId}/movie/{movieId}")
+	public FavouriteMovie unlikeMovie(@PathVariable("userId") int userId, @PathVariable("movieId") String movieId) {
+		FavouriteMovie movie = movieRepository.findMovieByImdbId(movieId, userId);
+		movieRepository.delete(movie);
+		return movie;
+	}
+	
 	@GetMapping("/api/users/{userId}/movie")
 	public List<FavouriteMovie> getLikedMovies(@PathVariable("userId") int userId){
 		User user = userRepository.findById(userId).get();
@@ -59,5 +68,11 @@ public class FavouriteMovieService {
 			userMovies.put(user.getFirstname(), movies);
 		}
 		return userMovies;
+	}
+	
+	@GetMapping("/api/movie/recentlyliked")
+	public List<FavouriteMovie> getRecentlyLikedMovies() {
+		List<FavouriteMovie> likedMovies = movieRepository.getRecentlyLikedMovie(new PageRequest(0, 10));
+		return likedMovies;
 	}
 }
